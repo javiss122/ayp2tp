@@ -42,11 +42,30 @@ func (s *Simulador) Iniciar() {
 
 // Devuelve true si aún hay vuelos por realizar
 func (s *Simulador) DebeContinuar() bool {
-	return false
+	if len(s.sigoa.Vuelos()) == 0 {
+		return false
+	}
+
+	ultima := s.sigoa.ObtenerHoraDelUltimoVuelo()
+	return s.hora.Before(ultima.Add(1 * time.Hour))
 }
 
 // Ejecuta un tick de la simulación
 func (s *Simulador) Tick() {
-	// TODO: procesar
+	// Generar llegada aleatoria de personas
+	if rand.Intn(10) < 3 {
+		p := NewPersona(uint(rand.Intn(1000000)), &Equipaje{Bultos: 1, PesoTotal: 20})
+		s.personas = append(s.personas, p)
+		if len(s.mostradores) == 0 {
+			s.mostradores = append(s.mostradores, NewMostrador(true))
+		}
+		s.mostradores[rand.Intn(len(s.mostradores))].HacerCola(p)
+	}
+
+	// Actualizar mostradores
+	for _, m := range s.mostradores {
+		m.Tick()
+	}
+
 	s.hora = s.hora.Add(time.Minute)
 }
