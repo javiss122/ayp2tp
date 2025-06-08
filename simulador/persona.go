@@ -42,3 +42,18 @@ func NewPersona(documento uint, equipaje *Equipaje) *Persona {
 		TicketEquipaje:  nil,
 	}
 }
+
+// CambiarEstado actualiza el estado de la persona y registra el momento
+func (p *Persona) CambiarEstado(e Estado) {
+	p.Estado = e
+	p.InicioAccion = time.Now()
+}
+
+// Atender marca a la persona como siendo atendida
+func (p *Persona) Atender() { p.CambiarEstado(SiendoAtendido) }
+
+// DespacharEquipaje marca que la persona está despachando su equipaje
+func (p *Persona) DespacharEquipaje() { p.CambiarEstado(Despachando) }
+
+// Retirar marca que la persona se retira del mostrador
+func (p *Persona) Retirar() { p.CambiarEstado(Retirandose) }
